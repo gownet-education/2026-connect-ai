@@ -62,7 +62,9 @@ a{text-decoration:none}
 .time-text.time-live{color:#1A3A5C}
 @keyframes livepulse{0%,100%{opacity:1}50%{opacity:0.25}}
 .card-break{background:#EDEAE4;border-radius:8px;padding:8px 12px}
+.card-break.card-live{border:1.5px solid #1A3A5C;background:#E4EAF0}
 .card-meal{background:#FFF9F0;border-radius:12px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.card-meal.card-live{border:1.5px solid #C8A050;background:#FFF3DE}
 .card-split{display:flex;flex-direction:column;gap:6px}
 .card-bar{display:flex;align-items:center;gap:6px;margin-bottom:6px}
 .bar{width:3px;height:14px;border-radius:2px;flex-shrink:0}
@@ -282,6 +284,9 @@ function getAutoDay(){
 }
 function getCurrentIdx(items){
   var now=new Date();
+  var m=now.getMonth()+1,d=now.getDate();
+  var today=(m===7&&d===24)?1:(m===7&&d===25)?2:0;
+  if(today===0||today!==state.day)return -1;
   var cur=now.getHours()*60+now.getMinutes();
   function toMin(t){var p=t.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
   for(var i=0;i<items.length;i++){
@@ -329,10 +334,10 @@ function renderTimeline(){
       dc='dot-navy';
       card='<div class="card-common'+liveClass+'">'+(isLive?live:'')+'<div class="card-bar"><div class="bar bar-navy"></div><span class="card-chip chip-navy">'+item.chip+'</span></div><div class="card-title">'+item.title+'</div>'+(item.speaker?'<div class="card-speaker">'+item.speaker+'</div>':'')+'</div>';
     }else if(item.type==='break'){
-      card='<div class="card-break"><span class="card-break-text">'+item.title+'</span></div>';
+      card='<div class="card-break'+liveClass+'">'+(isLive?live:'')+'<span class="card-break-text">'+item.title+'</span></div>';
     }else if(item.type==='meal'){
       dc='dot-amber';
-      card='<div class="card-meal"><div class="meal-bar"><div class="bar bar-amber"></div><span class="meal-title">'+item.title+'</span></div></div>';
+      card='<div class="card-meal'+liveClass+'">'+(isLive?live:'')+'<div class="meal-bar"><div class="bar bar-amber"></div><span class="meal-title">'+item.title+'</span></div></div>';
     }else if(item.type==='split'){
       dc='dot-navy';
       var se=track==='all'||track==='elem',sm=track==='all'||track==='mid';
